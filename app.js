@@ -593,7 +593,7 @@ function resetMarkDamageForm() {
   damagePinMarker.style.display = 'none';
   formDamageRect.style.display = 'none';
   addDamageBtn.disabled = true;
-  addDamageBtn.textContent = 'Add damage';
+  addDamageBtn.textContent = 'Add and save';
   document.querySelectorAll('.panel-segment').forEach(p => p.classList.remove('selected'));
 
   // Reset preview image
@@ -931,10 +931,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// === Escape to cancel drawing ===
+// === Escape to cancel drawing or close modal ===
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && state.isDrawing) {
-    state.isDrawing = false;
-    drawingRect.style.display = 'none';
+  if (e.key === 'Escape') {
+    if (state.isDrawing) {
+      state.isDrawing = false;
+      drawingRect.style.display = 'none';
+    } else if (screens.damageModal.classList.contains('active')) {
+      closeDamageModal();
+      renderConditionDamageSection();
+    }
   }
 });
