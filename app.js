@@ -112,7 +112,11 @@ function transitionToDamageModal() {
 }
 
 function openDamageModal() {
+  currentPhotoIndex = 0;
   showScreen('damageModal');
+  document.getElementById('modalPhotoTitle').textContent = photoAngles[currentPhotoIndex].name;
+  damageImage.src = photoAngles[currentPhotoIndex].src;
+  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
   renderDamageList();
   renderDamageRectangles();
   // Reset zoom button visibility
@@ -480,7 +484,7 @@ addDamageBtn.addEventListener('click', () => {
 
   if (state.editingDamageId) {
     // Update existing damage
-    const damage = state.damages.find(d => d.id === state.editingDamageId);
+    const damage = savedDamages.find(d => d.id === state.editingDamageId);
     if (damage) {
       damage.type = state.selectedType;
       damage.size = state.selectedSize;
@@ -497,17 +501,22 @@ addDamageBtn.addEventListener('click', () => {
     // Add new damage
     state.damageCounter++;
     const damage = {
-      id: state.damageCounter,
+      id: Date.now(),
       type: state.selectedType,
       size: state.selectedSize,
       location: panelName,
       rect: { ...state.currentDamage.rect },
       crop: state.currentDamage.crop ? { ...state.currentDamage.crop } : null,
       pinLocation: state.pinLocation ? { ...state.pinLocation } : null,
-      cropDataUrl: cropDataUrl || null
+      cropDataUrl: cropDataUrl || null,
+      photoIndex: currentPhotoIndex,
+      photoName: photoAngles[currentPhotoIndex].name
     };
-    state.damages.push(damage);
+    savedDamages.push(damage);
   }
+
+  // Update state.damages to reflect current photo
+  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
 
   resetMarkDamageForm();
   transitionToDamageModal();
@@ -570,6 +579,7 @@ function resetMarkDamageForm() {
   damagePinMarker.style.display = 'none';
   formDamageRect.style.display = 'none';
   addDamageBtn.disabled = true;
+  addDamageBtn.textContent = 'Add damage';
   document.querySelectorAll('.panel-segment').forEach(p => p.classList.remove('selected'));
 
   // Reset preview image
@@ -640,7 +650,7 @@ function renderDamageRectangles() {
 
 // === Edit / Delete Damage ===
 function editDamage(id) {
-  const damage = state.damages.find(d => d.id === id);
+  const damage = savedDamages.find(d => d.id === id);
   if (!damage) return;
 
   // Store which damage we're editing
@@ -681,6 +691,9 @@ function editDamage(id) {
 
   // Enable the button
   checkFormValidity();
+
+  // Change button text to "Save" for editing
+  addDamageBtn.textContent = 'Save';
 
   // Transition to mark damage screen
   transitionToMarkDamage();
@@ -726,7 +739,8 @@ function closePopoverOutside(e) {
 function confirmDelete(id) {
   document.querySelector('.delete-popover')?.remove();
   document.removeEventListener('click', closePopoverOutside);
-  state.damages = state.damages.filter(d => d.id !== id);
+  savedDamages = savedDamages.filter(d => d.id !== id);
+  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
   renderDamageList();
   renderDamageRectangles();
 }
@@ -738,8 +752,6 @@ function cancelDelete() {
 
 // === Add and Save ===
 addAndSaveBtn.addEventListener('click', () => {
-  // Store damages globally before closing
-  savedDamages = [...state.damages];
   closeDamageModal();
   renderConditionDamageSection();
 });
@@ -842,11 +854,7 @@ const photoAngles = [
   { name: 'Driver side - Front', src: 'assets/exterior_front_driver_18753495.jpg' },
   { name: 'Driver side - Back', src: 'assets/exterior_rear_driver_18753495.jpg' },
   { name: 'Passenger side - Front', src: 'assets/exterior_front_passenger_18753495.jpg' },
-  { name: 'Passenger side - Back', src: 'assets/exterior_rear_passenger_18753495.jpg' },
-  { name: 'Front seats', src: 'assets/interior_front_seats_18753495.jpg' },
-  { name: 'Rear seats', src: 'assets/interior_rear_seats_18753495.jpg' },
-  { name: 'Dashboard', src: 'assets/interior_dashboard_18753495.jpg' },
-  { name: 'Boot interior', src: 'assets/interior_boot_18753495.jpg' }
+  { name: 'Passenger side - Back', src: 'assets/exterior_rear_passenger_18753495.jpg' }
 ];
 let currentPhotoIndex = 0;
 
@@ -871,9 +879,9 @@ function updatePhoto() {
   wrapper.style.transform = '';
   panZoomBtn.style.opacity = '1';
   panZoomBtn.style.pointerEvents = 'auto';
-  // Clear damage rects for this view (damages are per-photo in a real app)
-  state.damages = [];
-  state.damageCounter = 0;
+  // Show only damages for this photo
+  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
+  state.damageCounter = savedDamages.length;
   renderDamageList();
   renderDamageRectangles();
 }
