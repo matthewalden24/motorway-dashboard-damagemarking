@@ -16,10 +16,22 @@ function handleLogin(e) {
   }
 
   error.textContent = '';
+  // Store session with 12-hour expiry
+  const expiry = Date.now() + (12 * 60 * 60 * 1000);
+  sessionStorage.setItem('auth_expiry', expiry.toString());
   document.getElementById('login-screen').classList.remove('active');
   document.getElementById('dashboard-screen').classList.add('active');
   return false;
 }
+
+// Check session on load
+(function checkAuth() {
+  const expiry = sessionStorage.getItem('auth_expiry');
+  if (expiry && Date.now() < parseInt(expiry)) {
+    document.getElementById('login-screen').classList.remove('active');
+    document.getElementById('dashboard-screen').classList.add('active');
+  }
+})();
 
 // === State ===
 const state = {
@@ -210,19 +222,21 @@ document.addEventListener('mouseup', (e) => {
 
   if (width > 10 && height > 10) {
     const containerRect = imageContainer.getBoundingClientRect();
+    const left = parseInt(drawingRect.style.left);
+    const top = parseInt(drawingRect.style.top);
 
     // Store rect as percentages of the container for consistent rendering
     state.currentDamage = {
       rect: {
-        left: parseInt(drawingRect.style.left),
-        top: parseInt(drawingRect.style.top),
-        width: width,
-        height: height
+        leftPct: left / containerRect.width * 100,
+        topPct: top / containerRect.height * 100,
+        widthPct: width / containerRect.width * 100,
+        heightPct: height / containerRect.height * 100
       },
       // Store as fractions of the visible image area for cropping
       crop: {
-        x: parseInt(drawingRect.style.left) / containerRect.width,
-        y: parseInt(drawingRect.style.top) / containerRect.height,
+        x: left / containerRect.width,
+        y: top / containerRect.height,
         w: width / containerRect.width,
         h: height / containerRect.height
       }
@@ -642,7 +656,7 @@ const damageTypeLabels = {
 
 function renderDamageRectangles() {
   damageRectangles.innerHTML = state.damages.map(d => `
-    <div class="damage-rect" data-damage-id="${d.id}" style="left:${d.rect.left}px;top:${d.rect.top}px;width:${d.rect.width}px;height:${d.rect.height}px;">
+    <div class="damage-rect" data-damage-id="${d.id}" style="left:${d.rect.leftPct}%;top:${d.rect.topPct}%;width:${d.rect.widthPct}%;height:${d.rect.heightPct}%;">
       <div class="damage-rect-label">${damageTypeLabels[d.type] || d.type}</div>
     </div>
   `).join('');
