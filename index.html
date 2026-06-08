@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Profile - Motorway</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/uknumberplate">
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="login-screen" class="screen active login-screen">
+    <div class="login-container">
+      <div class="login-logo">Motorway</div>
+      <form class="login-form" onsubmit="return handleLogin(event)">
+        <div class="login-field">
+          <label class="login-label">Email</label>
+          <input type="email" id="loginEmail" class="login-input" placeholder="name@motorway.co.uk" required>
+        </div>
+        <div class="login-field">
+          <label class="login-label">Password</label>
+          <input type="password" id="loginPassword" class="login-input" placeholder="Enter password" required>
+        </div>
+        <div class="login-error" id="loginError"></div>
+        <button type="submit" class="login-btn">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Screen 1: Dashboard -->
+  <div id="dashboard-screen" class="screen">
+    <nav class="top-nav">
+      <div class="select-wrapper">
+        <div class="select-input">
+          <span class="select-text">Full details - Agent profiling</span>
+          <img src="assets/icon-chevron-down.svg" alt="" class="select-chevron">
+        </div>
+      </div>
+      <div class="vrm-badge">
+        <div class="vrm-plate">
+          <span class="vrm-text">HK69 YCU</span>
+        </div>
+        <div class="vrm-copy">
+          <img src="assets/icon-copy.svg" alt="" width="16" height="16">
+        </div>
+      </div>
+      <div class="nav-icons">
+        <button class="nav-icon-btn" aria-label="Zendesk">
+          <img src="assets/icon-zendesk.svg" alt="">
+        </button>
+        <button class="nav-icon-btn" aria-label="Camera">
+          <img src="assets/icon-camera-retake.svg" alt="">
+        </button>
+      </div>
+    </nav>
+    <div class="dashboard-content">
+      <main class="photos-section">
+        <h2 class="section-title">Photos</h2>
+        <h3 class="subsection-title">Exterior</h3>
+        <div class="photo-grid">
+          <div class="photo-item" data-index="0">
+            <span class="photo-label">Driver side - Front</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-driver-front.png" alt="Driver side - Front">
+              <div class="photo-hover-overlay">
+                <div class="hover-icons-grid">
+                  <button class="hover-icon-btn badge-btn" aria-label="Edit image" data-tooltip="Edit image">
+                    <img src="assets/badge-expand.svg" alt="" width="32" height="32">
+                  </button>
+                  <button class="hover-icon-btn badge-btn" aria-label="Add damage" data-tooltip="Add damage" onclick="openDamageModal()">
+                    <img src="assets/badge-damage.svg" alt="" width="32" height="32">
+                  </button>
+                  <button class="hover-icon-btn badge-btn" aria-label="Download" data-tooltip="Download">
+                    <img src="assets/badge-edit.svg" alt="" width="32" height="32">
+                  </button>
+                  <button class="hover-icon-btn badge-btn" aria-label="Delete" data-tooltip="Delete">
+                    <img src="assets/badge-download.svg" alt="" width="32" height="32">
+                  </button>
+                  <button class="hover-icon-btn badge-btn" aria-label="Restore" data-tooltip="Restore">
+                    <img src="assets/badge-refresh.svg" alt="" width="32" height="32">
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="photo-item">
+            <span class="photo-label">Driver side - Back</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-driver-back.png" alt="Driver side - Back">
+            </div>
+          </div>
+          <div class="photo-item">
+            <span class="photo-label">Passenger side - Front</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-passenger-front.png" alt="Passenger side - Front">
+            </div>
+          </div>
+          <div class="photo-item">
+            <span class="photo-label">Passenger side - Back</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-passenger-back.png" alt="Passenger side - Back">
+            </div>
+          </div>
+        </div>
+        <h3 class="subsection-title">Interior</h3>
+        <div class="photo-grid">
+          <div class="photo-item">
+            <span class="photo-label">Front seats</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-front-seats.png" alt="Front seats">
+            </div>
+          </div>
+          <div class="photo-item">
+            <span class="photo-label">Rear seats</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-rear-seats.png" alt="Rear seats">
+            </div>
+          </div>
+          <div class="photo-item">
+            <span class="photo-label">Dashboard</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-dashboard.png" alt="Dashboard">
+            </div>
+          </div>
+          <div class="photo-item">
+            <span class="photo-label">Boot interior</span>
+            <div class="photo-wrapper">
+              <img src="assets/car-boot.png" alt="Boot interior">
+            </div>
+          </div>
+        </div>
+        <div class="photo-single">
+          <span class="photo-label">Instrument cluster</span>
+          <div class="photo-wrapper">
+            <img src="assets/car-instrument.png" alt="Instrument cluster">
+          </div>
+        </div>
+        <h3 class="subsection-title">Additional photos</h3>
+        <div class="photo-grid photo-grid-3">
+          <div class="photo-item no-label">
+            <div class="photo-wrapper">
+              <img src="assets/car-additional-1.png" alt="Additional photo 1">
+            </div>
+          </div>
+          <div class="photo-item no-label">
+            <div class="photo-wrapper">
+              <img src="assets/car-additional-2.png" alt="Additional photo 2">
+            </div>
+          </div>
+          <div class="photo-item no-label">
+            <div class="photo-wrapper">
+              <img src="assets/car-additional-3.png" alt="Additional photo 3">
+            </div>
+          </div>
+        </div>
+
+        <!-- Condition & Damage Section -->
+        <div id="conditionDamageSection" class="condition-damage-section" data-section="condition">
+          <h2 class="section-title">Condition &amp; damage</h2>
+          <div id="conditionDamageContent"></div>
+        </div>
+      </main>
+      <aside class="sidebar">
+        <a href="#" class="sidebar-link">Seller details</a>
+        <a href="#" class="sidebar-link">Pricing &amp; status</a>
+        <a href="#" class="sidebar-link">Bids</a>
+        <a href="#" class="sidebar-link">Notes</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" class="sidebar-link">Specification</a>
+        <a href="#" class="sidebar-link">Documentation</a>
+        <a href="#" class="sidebar-link">Service history</a>
+        <a href="#" class="sidebar-link">Vehicle history</a>
+        <a href="#" class="sidebar-link" data-sidebar="photos">Photos</a>
+        <a href="#" class="sidebar-link" data-sidebar="condition">Condition &amp; damage</a>
+        <a href="#" class="sidebar-link">Wheels &amp; tyres</a>
+        <a href="#" class="sidebar-link">Relist details</a>
+        <a href="#" class="sidebar-link">Status logs</a>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Screen 2: Damage Modal (Full screen) -->
+  <div id="damage-modal" class="screen modal-screen">
+    <div class="modal-content-area">
+      <div class="modal-header">
+        <div class="modal-title-nav">
+          <button class="btn-icon-round btn-icon-small" id="prevPhotoBtn" aria-label="Previous photo">
+            <img src="assets/icon-back-arrow.svg" alt="" width="14" height="14">
+          </button>
+          <button class="btn-icon-round btn-icon-small" id="nextPhotoBtn" aria-label="Next photo">
+            <img src="assets/icon-back-arrow.svg" alt="" width="14" height="14" style="transform: rotate(180deg)">
+          </button>
+          <h2 class="modal-title" id="modalPhotoTitle">Driver side - Front</h2>
+        </div>
+        <div class="modal-header-actions">
+          <button class="btn-ghost" onclick="closeDamageModal()">Discard</button>
+          <button class="btn-primary" id="addAndSaveBtn">Save and close</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="image-panel">
+          <div class="image-container" id="imageContainer">
+            <div class="image-transform-wrapper" id="imageTransformWrapper">
+              <img src="assets/exterior_front_driver_18753495.jpg" alt="Driver side - Front" id="damageImage" draggable="false">
+              <div class="damage-rectangles" id="damageRectangles"></div>
+            </div>
+            <div class="drawing-rect" id="drawingRect"></div>
+          </div>
+          <button class="pan-zoom-btn" id="panZoomBtn" aria-label="Pan and zoom">
+            <img src="assets/icon-panzoom.svg" alt="" width="32" height="32">
+          </button>
+        </div>
+        <div class="damage-sidebar" id="damageSidebar">
+          <div class="damage-sidebar-header">
+            <h3 class="damage-sidebar-title">Damage</h3>
+            <p class="damage-sidebar-subtitle">Click and drag to mark new damage</p>
+          </div>
+          <div class="damage-list" id="damageList">
+            <div class="damage-empty">None added</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Mark Damage Form -->
+  <div id="mark-damage-screen" class="screen modal-screen">
+    <div class="modal-content-area">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <button class="btn-icon-round" onclick="goBackToDamage()" aria-label="Go back">
+            <img src="assets/icon-back-arrow.svg" alt="" width="19" height="18">
+          </button>
+          <h2 class="modal-title">Driver side - Front</h2>
+        </div>
+        <div class="modal-header-actions">
+          <button class="btn-ghost" onclick="goBackToDamage()">Discard</button>
+          <button class="btn-primary" id="addDamageBtn" disabled>Add damage</button>
+        </div>
+      </div>
+      <div class="modal-body mark-damage-body">
+        <div class="form-panel">
+          <div class="form-image-preview">
+            <img src="assets/exterior_front_driver_18753495.jpg" alt="Damage area" id="formPreviewImage">
+            <div class="form-damage-rect" id="formDamageRect"></div>
+          </div>
+          <div class="form-fields">
+            <div class="form-group">
+              <label class="form-label">Damage type <span class="required">*</span></label>
+              <div class="select-dark" id="damageTypeSelect">
+                <span class="select-dark-text" id="damageTypeText">Select the damage type</span>
+                <img src="assets/icon-chevron-down.svg" alt="" class="select-dark-chevron">
+              </div>
+              <div class="dropdown-menu" id="damageTypeDropdown">
+                <div class="dropdown-item" data-value="Scratch or scuff">Scratch or scuff</div>
+                <div class="dropdown-item" data-value="Dent">Dent</div>
+                <div class="dropdown-item" data-value="Paintwork problem">Paintwork problem</div>
+                <div class="dropdown-item" data-value="Broken or missing trim">Broken or missing trim</div>
+                <div class="dropdown-item" data-value="Windscreen chip or crack">Windscreen chip or crack</div>
+                <div class="dropdown-item" data-value="Other">Other</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label-heading">Damage size</label>
+              <div class="radio-group">
+                <label class="radio-option border-bottom">
+                  <input type="radio" name="damageSize" value="Small">
+                  <span class="radio-custom"></span>
+                  <span class="radio-text">Small </span>
+                  <span class="radio-hint">0 - 5cm</span>
+                </label>
+                <label class="radio-option border-bottom">
+                  <input type="radio" name="damageSize" value="Medium">
+                  <span class="radio-custom"></span>
+                  <span class="radio-text">Medium</span>
+                  <span class="radio-hint">6 - 15cm</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="damageSize" value="Large">
+                  <span class="radio-custom"></span>
+                  <span class="radio-text">Large </span>
+                  <span class="radio-hint">+ 16cm</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="vehicle-panel">
+          <h3 class="vehicle-panel-title">Mark the damage location</h3>
+          <div class="vehicle-diagram" id="vehicleDiagram">
+            <img src="assets/vehicle-driver.svg" alt="Vehicle diagram" class="vehicle-svg">
+            <div class="damage-pin" id="damagePinMarker" style="display:none;">
+              <div class="pin-dot"></div>
+            </div>
+          </div>
+          <div class="vehicle-angles">
+            <button class="angle-btn active" data-angle="driver">
+              <img src="assets/icon-car-driver.svg" alt="" width="32" height="32">
+              <span>Driver</span>
+            </button>
+            <button class="angle-btn" data-angle="front">
+              <img src="assets/icon-car-front.svg" alt="" width="32" height="32">
+              <span>Front</span>
+            </button>
+            <button class="angle-btn" data-angle="passenger">
+              <img src="assets/icon-car-passenger.svg" alt="" width="32" height="32">
+              <span>Passenger</span>
+            </button>
+            <button class="angle-btn" data-angle="back">
+              <img src="assets/icon-car-rear.svg" alt="" width="32" height="32">
+              <span>Back</span>
+            </button>
+            <button class="angle-btn" data-angle="roof">
+              <img src="assets/icon-car-top.svg" alt="" width="32" height="32">
+              <span>Roof</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
