@@ -361,7 +361,7 @@ function updateImageTransform() {
   const labelScale = Math.max(0.6, 1 / Math.sqrt(state.zoom));
   document.querySelectorAll('.damage-rect-label').forEach(label => {
     label.style.transform = `scale(${labelScale})`;
-    label.style.transformOrigin = 'bottom left';
+    label.style.transformOrigin = 'top left';
   });
 }
 
