@@ -634,7 +634,7 @@ function renderDamageList() {
   html += aiForPhoto.map(s => `
     <div class="damage-list-item ai-item" data-ai-id="${s.id}">
       <div style="display:flex;gap:8px;align-items:flex-start;">
-        <svg class="ai-sparkle" viewBox="0 0 16 16" fill="none"><path d="M8 0.5L9.5 6.5L15.5 8L9.5 9.5L8 15.5L6.5 9.5L0.5 8L6.5 6.5L8 0.5Z" fill="#9e30df"/></svg>
+        <img class="ai-sparkle" src="assets/icon-glitter.svg" alt="" width="16" height="16">
         <div class="damage-item-info">
           <span class="damage-item-title">${s.type}</span>
           <span class="damage-item-detail">${s.size} - ${s.location}</span>
