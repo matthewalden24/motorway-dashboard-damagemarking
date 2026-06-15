@@ -49,7 +49,9 @@ const state = {
   pinLocation: null,
   damageCounter: 0,
   editingDamageId: null,
-  selectedPanel: null
+  selectedPanel: null,
+  aiSuggestionsShown: false,
+  aiSuggestions: []
 };
 
 // === DOM Elements ===
@@ -129,6 +131,17 @@ function openDamageModal() {
   document.getElementById('modalPhotoTitle').textContent = photoAngles[currentPhotoIndex].name;
   damageImage.src = photoAngles[currentPhotoIndex].src;
   state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
+
+  // Add AI suggestions on first open for first photo
+  if (!state.aiSuggestionsShown) {
+    state.aiSuggestionsShown = true;
+    state.aiSuggestions = [
+      { id: 'ai-1', type: 'Dent', size: 'Large', location: 'Driver door', isAi: true, photoIndex: 0, rect: { leftPct: 12.8, topPct: 50.6, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.128, y: 0.506, w: 0.068, h: 0.071 } },
+      { id: 'ai-2', type: 'Scratch or scuff', size: 'Small', location: 'Front wing', isAi: true, photoIndex: 0, rect: { leftPct: 29.4, topPct: 50.2, widthPct: 8.7, heightPct: 8.9 }, crop: { x: 0.294, y: 0.502, w: 0.087, h: 0.089 } },
+      { id: 'ai-3', type: 'Broken or missing trim', size: 'Small', location: 'Front bumper', isAi: true, photoIndex: 0, rect: { leftPct: 57.2, topPct: 82.6, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.572, y: 0.826, w: 0.068, h: 0.071 } }
+    ];
+  }
+
   renderDamageList();
   renderDamageRectangles();
   // Reset zoom button visibility
@@ -607,12 +620,42 @@ function resetMarkDamageForm() {
 
 // === Render Damage List ===
 function renderDamageList() {
-  if (state.damages.length === 0) {
+  const aiForPhoto = state.aiSuggestions.filter(s => s.photoIndex === currentPhotoIndex);
+  const hasItems = state.damages.length > 0 || aiForPhoto.length > 0;
+
+  if (!hasItems) {
     damageList.innerHTML = '<div class="damage-empty">None added</div>';
     return;
   }
 
-  damageList.innerHTML = state.damages.map((d, i) => `
+  let html = '';
+
+  // AI suggestions first
+  html += aiForPhoto.map(s => `
+    <div class="damage-list-item ai-item" data-ai-id="${s.id}">
+      <div style="display:flex;gap:8px;align-items:flex-start;">
+        <svg class="ai-sparkle" viewBox="0 0 16 16" fill="none"><path d="M8 0.5L9.5 6.5L15.5 8L9.5 9.5L8 15.5L6.5 9.5L0.5 8L6.5 6.5L8 0.5Z" fill="#9e30df"/></svg>
+        <div class="damage-item-info">
+          <span class="damage-item-title">${s.type}</span>
+          <span class="damage-item-detail">${s.size} - ${s.location}</span>
+        </div>
+      </div>
+      <div class="damage-item-actions">
+        <button class="damage-item-btn" onclick="editAiSuggestion('${s.id}')" aria-label="Edit">
+          <img src="assets/icon-pencil-edit.svg" alt="" width="16" height="16">
+        </button>
+        <button class="damage-item-btn" onclick="dismissAiSuggestion('${s.id}')" aria-label="Delete">
+          <img src="assets/icon-bin-delete.svg" alt="" width="16" height="16">
+        </button>
+        <button class="ai-approve-btn" onclick="approveAiSuggestion('${s.id}')" aria-label="Approve">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="#242424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  // Confirmed damages
+  html += state.damages.map((d, i) => `
     <div class="damage-list-item" data-id="${d.id}">
       <div class="damage-item-info">
         <span class="damage-item-title">${d.type}</span>
@@ -629,9 +672,16 @@ function renderDamageList() {
     </div>
   `).join('');
 
+  // Show "No agent added damage" if only AI suggestions exist
+  if (state.damages.length === 0 && aiForPhoto.length > 0) {
+    html += '<div class="damage-empty" style="margin-top:8px;">No agent added damage</div>';
+  }
+
+  damageList.innerHTML = html;
+
   // Damage list rendered
   // Bind hover on list items to highlight corresponding rect
-  document.querySelectorAll('.damage-list-item').forEach(item => {
+  document.querySelectorAll('.damage-list-item[data-id]').forEach(item => {
     const id = item.dataset.id;
     item.addEventListener('mouseenter', () => {
       const rect = damageRectangles.querySelector(`[data-damage-id="${id}"]`);
@@ -655,11 +705,85 @@ const damageTypeLabels = {
 };
 
 function renderDamageRectangles() {
-  damageRectangles.innerHTML = state.damages.map(d => `
+  let html = '';
+
+  // Render confirmed damages
+  html += state.damages.map(d => `
     <div class="damage-rect" data-damage-id="${d.id}" style="left:${d.rect.leftPct}%;top:${d.rect.topPct}%;width:${d.rect.widthPct}%;height:${d.rect.heightPct}%;">
       <div class="damage-rect-label">${damageTypeLabels[d.type] || d.type}</div>
     </div>
   `).join('');
+
+  // Render AI suggestions (dashed purple)
+  const aiForPhoto = state.aiSuggestions.filter(s => s.photoIndex === currentPhotoIndex);
+  html += aiForPhoto.map(s => `
+    <div class="damage-rect ai-suggestion" data-ai-id="${s.id}" style="left:${s.rect.leftPct}%;top:${s.rect.topPct}%;width:${s.rect.widthPct}%;height:${s.rect.heightPct}%;">
+      <div class="damage-rect-label">${damageTypeLabels[s.type] || s.type}</div>
+    </div>
+  `).join('');
+
+  damageRectangles.innerHTML = html;
+}
+
+// === AI Suggestion Actions ===
+function approveAiSuggestion(aiId) {
+  const suggestion = state.aiSuggestions.find(s => s.id === aiId);
+  if (!suggestion) return;
+
+  // Convert to confirmed damage
+  const damage = {
+    id: Date.now(),
+    type: suggestion.type,
+    size: suggestion.size,
+    location: suggestion.location,
+    rect: { ...suggestion.rect },
+    crop: suggestion.crop ? { ...suggestion.crop } : null,
+    pinLocation: null,
+    cropDataUrl: null,
+    photoIndex: suggestion.photoIndex,
+    photoName: photoAngles[suggestion.photoIndex].name
+  };
+
+  savedDamages.push(damage);
+  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
+
+  // Remove from suggestions
+  state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
+
+  renderDamageList();
+  renderDamageRectangles();
+}
+
+function dismissAiSuggestion(aiId) {
+  state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
+  renderDamageList();
+  renderDamageRectangles();
+}
+
+function editAiSuggestion(aiId) {
+  const suggestion = state.aiSuggestions.find(s => s.id === aiId);
+  if (!suggestion) return;
+
+  // Approve it first (add to saved damages), then open for editing
+  const damage = {
+    id: Date.now(),
+    type: suggestion.type,
+    size: suggestion.size,
+    location: suggestion.location,
+    rect: { ...suggestion.rect },
+    crop: suggestion.crop ? { ...suggestion.crop } : null,
+    pinLocation: null,
+    cropDataUrl: null,
+    photoIndex: suggestion.photoIndex,
+    photoName: photoAngles[suggestion.photoIndex].name
+  };
+
+  savedDamages.push(damage);
+  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
+  state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
+
+  // Now open edit for this damage
+  editDamage(damage.id);
 }
 
 // === Edit / Delete Damage ===
