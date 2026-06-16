@@ -618,65 +618,43 @@ function resetMarkDamageForm() {
 // === Render Damage List ===
 function renderDamageList() {
   const aiForPhoto = state.aiSuggestions.filter(s => s.photoIndex === currentPhotoIndex);
-  const hasItems = state.damages.length > 0 || aiForPhoto.length > 0;
-
-  if (!hasItems) {
-    damageList.innerHTML = '<div class="damage-empty">None added</div>';
-    return;
-  }
+  const aiCount = aiForPhoto.length;
 
   let html = '';
 
-  // AI suggestions first
-  html += aiForPhoto.map(s => `
-    <div class="damage-list-item ai-item" data-ai-id="${s.id}">
-      <div style="display:flex;gap:8px;align-items:flex-start;">
-        <img class="ai-sparkle" src="assets/icon-glitter.svg" alt="" width="16" height="16">
+  // AI suggestions summary row
+  html += `<div class="damage-summary-row">
+    <img src="assets/icon-glitter.svg" alt="" width="16" height="16">
+    <span class="damage-summary-text">${aiCount > 0 ? aiCount + ' suggestion' + (aiCount > 1 ? 's' : '') + ' to review' : 'No AI suggestions'}</span>
+  </div>`;
+
+  // Agent added damage section
+  if (state.damages.length === 0) {
+    html += `<div class="damage-summary-row">
+      <img src="assets/icon-profile.svg" alt="" width="16" height="16">
+      <span class="damage-summary-text">No agent added damage</span>
+    </div>`;
+  } else {
+    html += state.damages.map((d, i) => `
+      <div class="damage-list-item" data-id="${d.id}">
         <div class="damage-item-info">
-          <span class="damage-item-title">${s.type}</span>
-          <span class="damage-item-detail">${s.size} - ${s.location}</span>
+          <span class="damage-item-title">${d.type}</span>
+          <span class="damage-item-detail">${d.size} - ${d.location}</span>
+        </div>
+        <div class="damage-item-actions">
+          <button class="damage-item-btn" onclick="editDamage(${d.id})" aria-label="Edit">
+            <img src="assets/icon-pencil-edit.svg" alt="" width="16" height="16">
+          </button>
+          <button class="damage-item-btn" onclick="deleteDamage(${d.id})" aria-label="Delete">
+            <img src="assets/icon-bin-delete.svg" alt="" width="16" height="16">
+          </button>
         </div>
       </div>
-      <div class="damage-item-actions">
-        <button class="damage-item-btn" onclick="editAiSuggestion('${s.id}')" aria-label="Edit">
-          <img src="assets/icon-pencil-edit.svg" alt="" width="16" height="16">
-        </button>
-        <button class="damage-item-btn" onclick="dismissAiSuggestion('${s.id}')" aria-label="Delete">
-          <img src="assets/icon-bin-delete.svg" alt="" width="16" height="16">
-        </button>
-        <button class="ai-approve-btn" onclick="approveAiSuggestion('${s.id}')" aria-label="Approve">
-          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="#242424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-    </div>
-  `).join('');
-
-  // Confirmed damages
-  html += state.damages.map((d, i) => `
-    <div class="damage-list-item" data-id="${d.id}">
-      <div class="damage-item-info">
-        <span class="damage-item-title">${d.type}</span>
-        <span class="damage-item-detail">${d.size} - ${d.location}</span>
-      </div>
-      <div class="damage-item-actions">
-        <button class="damage-item-btn" onclick="editDamage(${d.id})" aria-label="Edit">
-          <img src="assets/icon-pencil-edit.svg" alt="" width="16" height="16">
-        </button>
-        <button class="damage-item-btn" onclick="deleteDamage(${d.id})" aria-label="Delete">
-          <img src="assets/icon-bin-delete.svg" alt="" width="16" height="16">
-        </button>
-      </div>
-    </div>
-  `).join('');
-
-  // Show "No agent added damage" if only AI suggestions exist
-  if (state.damages.length === 0 && aiForPhoto.length > 0) {
-    html += '<div class="damage-empty" style="margin-top:8px;">No agent added damage</div>';
+    `).join('');
   }
 
   damageList.innerHTML = html;
 
-  // Damage list rendered
   // Bind hover on list items to show label on corresponding rect
   document.querySelectorAll('.damage-list-item[data-id]').forEach(item => {
     const id = item.dataset.id;
@@ -687,19 +665,6 @@ function renderDamageList() {
     item.addEventListener('mouseleave', () => {
       const rect = damageRectangles.querySelector(`[data-damage-id="${id}"]`);
       if (rect) { rect.classList.remove('highlighted'); rect.classList.remove('show-label'); }
-    });
-  });
-
-  // Also bind AI suggestion list items
-  document.querySelectorAll('.damage-list-item[data-ai-id]').forEach(item => {
-    const aiId = item.dataset.aiId;
-    item.addEventListener('mouseenter', () => {
-      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
-      if (rect) rect.classList.add('show-label');
-    });
-    item.addEventListener('mouseleave', () => {
-      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
-      if (rect) rect.classList.remove('show-label');
     });
   });
 }

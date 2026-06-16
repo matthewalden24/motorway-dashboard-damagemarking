@@ -706,6 +706,22 @@ html, body {
   line-height: 1.44;
 }
 
+.damage-summary-row {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 24px 16px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.damage-summary-text {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-placeholder);
+  line-height: 1.44;
+}
+
 .damage-list-item {
   display: flex;
   align-items: center;
