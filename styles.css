@@ -751,6 +751,22 @@ html, body {
   line-height: 1.44;
 }
 
+.damage-item-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-placeholder);
+  line-height: 1.44;
+}
+
+.damage-source-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
 .damage-item-actions {
   display: flex;
   gap: 8px;

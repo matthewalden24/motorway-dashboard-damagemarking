@@ -622,24 +622,32 @@ function renderDamageList() {
 
   let html = '';
 
-  // AI suggestions summary row
-  html += `<div class="damage-summary-row">
-    <img src="assets/icon-glitter.svg" alt="" width="16" height="16">
-    <span class="damage-summary-text">${aiCount > 0 ? aiCount + ' suggestion' + (aiCount > 1 ? 's' : '') + ' to review' : 'No AI suggestions'}</span>
-  </div>`;
+  // AI suggestions summary row (only show if there are suggestions remaining)
+  if (aiCount > 0) {
+    html += `<div class="damage-summary-row">
+      <img src="assets/icon-glitter.svg" alt="" width="16" height="16">
+      <span class="damage-summary-text">${aiCount} suggestion${aiCount > 1 ? 's' : ''} to review</span>
+    </div>`;
+  }
 
-  // Agent added damage section
+  // Damage items list
   if (state.damages.length === 0) {
     html += `<div class="damage-summary-row">
       <img src="assets/icon-profile.svg" alt="" width="16" height="16">
       <span class="damage-summary-text">No agent added damage</span>
     </div>`;
   } else {
-    html += state.damages.map((d, i) => `
+    html += state.damages.map((d) => {
+      const isAiApproved = d.isAiApproved;
+      const sourceIcon = isAiApproved ? 'assets/icon-glitter.svg' : 'assets/icon-profile.svg';
+      return `
       <div class="damage-list-item" data-id="${d.id}">
         <div class="damage-item-info">
           <span class="damage-item-title">${d.type}</span>
-          <span class="damage-item-detail">${d.size} - ${d.location}</span>
+          <span class="damage-item-detail-row">
+            <img src="${sourceIcon}" alt="" width="12" height="12" class="damage-source-icon">
+            <span>${d.size} - ${d.location}</span>
+          </span>
         </div>
         <div class="damage-item-actions">
           <button class="damage-item-btn" onclick="editDamage(${d.id})" aria-label="Edit">
@@ -649,8 +657,8 @@ function renderDamageList() {
             <img src="assets/icon-bin-delete.svg" alt="" width="16" height="16">
           </button>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
   damageList.innerHTML = html;
@@ -727,7 +735,8 @@ function approveAiSuggestion(aiId) {
     pinLocation: null,
     cropDataUrl: null,
     photoIndex: suggestion.photoIndex,
-    photoName: photoAngles[suggestion.photoIndex].name
+    photoName: photoAngles[suggestion.photoIndex].name,
+    isAiApproved: true
   };
 
   savedDamages.push(damage);
@@ -761,7 +770,8 @@ function editAiSuggestion(aiId) {
     pinLocation: null,
     cropDataUrl: null,
     photoIndex: suggestion.photoIndex,
-    photoName: photoAngles[suggestion.photoIndex].name
+    photoName: photoAngles[suggestion.photoIndex].name,
+    isAiApproved: true
   };
 
   savedDamages.push(damage);
