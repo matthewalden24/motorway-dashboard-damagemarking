@@ -355,10 +355,19 @@ function updateImageTransform() {
   const wrapper = document.getElementById('imageTransformWrapper');
   wrapper.style.transform = `translate(${state.panOffset.x}px, ${state.panOffset.y}px) scale(${state.zoom})`;
 
-  // Keep border visually consistent regardless of zoom (softer scaling)
-  const scaledBorder = Math.max(1.5, 2 / Math.sqrt(state.zoom));
+  // Keep border visually consistent regardless of zoom
+  const inverseZoom = 1 / state.zoom;
+  const scaledBorder = 2 * inverseZoom;
   document.querySelectorAll('.damage-rect').forEach(rect => {
     rect.style.borderWidth = scaledBorder + 'px';
+  });
+
+  // Counter-scale labels and buttons to stay same screen size
+  document.querySelectorAll('.damage-rect-label').forEach(label => {
+    label.style.transform = `translateX(-50%) scale(${inverseZoom})`;
+  });
+  document.querySelectorAll('.ai-rect-actions').forEach(actions => {
+    actions.style.transform = `translateX(-50%) scale(${inverseZoom})`;
   });
 }
 
