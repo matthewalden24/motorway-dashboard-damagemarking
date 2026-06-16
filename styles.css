@@ -1544,6 +1544,46 @@ input:focus-visible {
 .damage-rect.ai-suggestion {
   border: 2px dotted #FF00D4;
   background: rgba(217, 217, 217, 0.05);
+  border-radius: 4px;
+}
+
+.ai-rect-actions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.damage-rect.ai-suggestion:hover .ai-rect-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ai-rect-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(36, 36, 36, 0.85);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.ai-rect-btn:hover {
+  background: rgba(36, 36, 36, 1);
+  transform: scale(1.1);
+}
+
+.ai-rect-btn-approve {
+  background: rgba(36, 36, 36, 0.85);
 }
 
 .damage-rect.ai-suggestion .damage-rect-label {

@@ -727,8 +727,19 @@ function renderDamageRectangles() {
   // Render AI suggestions (dotted pink)
   const aiForPhoto = state.aiSuggestions.filter(s => s.photoIndex === currentPhotoIndex);
   html += aiForPhoto.map(s => `
-    <div class="damage-rect ai-suggestion" data-ai-id="${s.id}" onclick="editAiSuggestion('${s.id}')" style="left:${s.rect.leftPct}%;top:${s.rect.topPct}%;width:${s.rect.widthPct}%;height:${s.rect.heightPct}%;">
+    <div class="damage-rect ai-suggestion" data-ai-id="${s.id}" style="left:${s.rect.leftPct}%;top:${s.rect.topPct}%;width:${s.rect.widthPct}%;height:${s.rect.heightPct}%;">
       <div class="damage-rect-label">${damageTypeLabels[s.type] || s.type}</div>
+      <div class="ai-rect-actions">
+        <button class="ai-rect-btn" onclick="event.stopPropagation();dismissAiSuggestion('${s.id}')" aria-label="Dismiss">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5.3 4V2.7c0-.4.2-.7.4-1 .3-.3.6-.4 1-.4h2.6c.4 0 .7.2 1 .4.3.3.4.6.4 1V4M12.7 4v9.3c0 .4-.2.7-.4 1-.3.3-.6.4-1 .4H4.7c-.4 0-.7-.2-1-.4-.3-.3-.4-.6-.4-1V4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="ai-rect-btn" onclick="event.stopPropagation();editAiSuggestion('${s.id}')" aria-label="Edit">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11.3 1.7a1.6 1.6 0 012.3 0l.7.7a1.6 1.6 0 010 2.3L5.7 13.3 2 14l.7-3.7 8.6-8.6z" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="ai-rect-btn ai-rect-btn-approve" onclick="event.stopPropagation();approveAiSuggestion('${s.id}')" aria-label="Approve">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
     </div>
   `).join('');
 
