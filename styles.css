@@ -626,6 +626,7 @@ html, body {
   bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
+  transform-origin: center bottom;
   background: rgba(0, 0, 0, 0.8);
   color: white;
   font-size: 12px;
@@ -1603,6 +1604,7 @@ input:focus-visible {
   top: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
+  transform-origin: center top;
   display: flex;
   gap: 8px;
   opacity: 0;

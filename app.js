@@ -360,6 +360,15 @@ function updateImageTransform() {
   document.querySelectorAll('.damage-rect').forEach(rect => {
     rect.style.borderWidth = scaledBorder + 'px';
   });
+
+  // Counter-scale labels and AI action buttons so they stay the same visual size
+  const inverseScale = 1 / state.zoom;
+  document.querySelectorAll('.damage-rect-label').forEach(label => {
+    label.style.transform = `translateX(-50%) scale(${inverseScale})`;
+  });
+  document.querySelectorAll('.ai-rect-actions').forEach(actions => {
+    actions.style.transform = `translateX(-50%) scale(${inverseScale})`;
+  });
 }
 
 // === Form Preview ===
