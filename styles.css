@@ -644,6 +644,7 @@ html, body {
 }
 
 .damage-rect:hover .damage-rect-label {
+  opacity: 1;
 }
 
 .drawing-rect {
@@ -1540,7 +1541,7 @@ input:focus-visible {
 
 /* === AI Suggestions === */
 .damage-rect.ai-suggestion {
-  border: 1px dotted #FF00D4;
+  border: 2px dotted #FF00D4;
   background: rgba(217, 217, 217, 0.05);
 }
 
