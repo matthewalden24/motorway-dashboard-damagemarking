@@ -1552,9 +1552,18 @@ input:focus-visible {
   content: '';
   position: absolute;
   top: 100%;
-  left: 0;
-  right: 0;
+  left: -10px;
+  right: -10px;
   height: 56px;
+  pointer-events: none;
+}
+
+.damage-rect.ai-suggestion:hover {
+  z-index: 100;
+}
+
+.damage-rect.ai-suggestion:hover::after {
+  pointer-events: auto;
 }
 
 .ai-rect-actions {
