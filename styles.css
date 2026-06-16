@@ -1545,6 +1545,16 @@ input:focus-visible {
   border: 2px dotted #FF00D4;
   background: rgba(217, 217, 217, 0.05);
   border-radius: 4px;
+  overflow: visible;
+}
+
+.damage-rect.ai-suggestion::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 56px;
 }
 
 .ai-rect-actions {
@@ -1577,6 +1587,10 @@ input:focus-visible {
   transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
+.ai-rect-btn img {
+  filter: brightness(0) invert(1);
+}
+
 .ai-rect-btn:hover {
   background: rgba(36, 36, 36, 1);
   transform: scale(1.1);
@@ -1584,6 +1598,10 @@ input:focus-visible {
 
 .ai-rect-btn-approve {
   background: rgba(36, 36, 36, 0.85);
+}
+
+.ai-rect-btn-approve img {
+  filter: brightness(0) invert(1);
 }
 
 .damage-rect.ai-suggestion .damage-rect-label {
