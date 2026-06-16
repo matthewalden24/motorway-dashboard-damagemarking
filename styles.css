@@ -618,6 +618,7 @@ html, body {
   background: rgba(217, 217, 217, 0.05);
   pointer-events: auto;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .damage-rect-label {

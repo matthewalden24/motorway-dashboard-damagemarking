@@ -716,15 +716,15 @@ function renderDamageRectangles() {
 
   // Render confirmed damages
   html += state.damages.map(d => `
-    <div class="damage-rect" data-damage-id="${d.id}" style="left:${d.rect.leftPct}%;top:${d.rect.topPct}%;width:${d.rect.widthPct}%;height:${d.rect.heightPct}%;">
+    <div class="damage-rect" data-damage-id="${d.id}" onclick="editDamage(${d.id})" style="left:${d.rect.leftPct}%;top:${d.rect.topPct}%;width:${d.rect.widthPct}%;height:${d.rect.heightPct}%;">
       <div class="damage-rect-label">${damageTypeLabels[d.type] || d.type}</div>
     </div>
   `).join('');
 
-  // Render AI suggestions (dashed purple)
+  // Render AI suggestions (dotted pink)
   const aiForPhoto = state.aiSuggestions.filter(s => s.photoIndex === currentPhotoIndex);
   html += aiForPhoto.map(s => `
-    <div class="damage-rect ai-suggestion" data-ai-id="${s.id}" style="left:${s.rect.leftPct}%;top:${s.rect.topPct}%;width:${s.rect.widthPct}%;height:${s.rect.heightPct}%;">
+    <div class="damage-rect ai-suggestion" data-ai-id="${s.id}" onclick="editAiSuggestion('${s.id}')" style="left:${s.rect.leftPct}%;top:${s.rect.topPct}%;width:${s.rect.widthPct}%;height:${s.rect.heightPct}%;">
       <div class="damage-rect-label">${damageTypeLabels[s.type] || s.type}</div>
     </div>
   `).join('');
