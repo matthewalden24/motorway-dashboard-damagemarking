@@ -357,12 +357,6 @@ function updateImageTransform() {
   document.querySelectorAll('.damage-rect').forEach(rect => {
     rect.style.borderWidth = scaledBorder + 'px';
   });
-  // Keep label at readable size, close to the rect
-  const labelScale = Math.max(0.6, 1 / Math.sqrt(state.zoom));
-  document.querySelectorAll('.damage-rect-label').forEach(label => {
-    label.style.transform = `scale(${labelScale})`;
-    label.style.transformOrigin = 'top left';
-  });
 }
 
 // === Form Preview ===
@@ -680,16 +674,29 @@ function renderDamageList() {
   damageList.innerHTML = html;
 
   // Damage list rendered
-  // Bind hover on list items to highlight corresponding rect
+  // Bind hover on list items to show label on corresponding rect
   document.querySelectorAll('.damage-list-item[data-id]').forEach(item => {
     const id = item.dataset.id;
     item.addEventListener('mouseenter', () => {
       const rect = damageRectangles.querySelector(`[data-damage-id="${id}"]`);
-      if (rect) rect.classList.add('highlighted');
+      if (rect) { rect.classList.add('highlighted'); rect.classList.add('show-label'); }
     });
     item.addEventListener('mouseleave', () => {
       const rect = damageRectangles.querySelector(`[data-damage-id="${id}"]`);
-      if (rect) rect.classList.remove('highlighted');
+      if (rect) { rect.classList.remove('highlighted'); rect.classList.remove('show-label'); }
+    });
+  });
+
+  // Also bind AI suggestion list items
+  document.querySelectorAll('.damage-list-item[data-ai-id]').forEach(item => {
+    const aiId = item.dataset.aiId;
+    item.addEventListener('mouseenter', () => {
+      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
+      if (rect) rect.classList.add('show-label');
+    });
+    item.addEventListener('mouseleave', () => {
+      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
+      if (rect) rect.classList.remove('show-label');
     });
   });
 }
