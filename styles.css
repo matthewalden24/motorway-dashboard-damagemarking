@@ -1597,7 +1597,8 @@ input:focus-visible {
 }
 
 .ai-rect-btn img {
-  filter: brightness(0) invert(1);
+  width: 16px;
+  height: 16px;
 }
 
 .ai-rect-btn:hover {

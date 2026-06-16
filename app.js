@@ -731,13 +731,13 @@ function renderDamageRectangles() {
       <div class="damage-rect-label">${damageTypeLabels[s.type] || s.type}</div>
       <div class="ai-rect-actions">
         <button class="ai-rect-btn" onclick="event.stopPropagation();dismissAiSuggestion('${s.id}')" aria-label="Dismiss">
-          <img src="assets/icon-bin-delete.svg" alt="" width="16" height="16">
+          <img src="assets/ai-btn-delete.svg" alt="" width="16" height="16">
         </button>
         <button class="ai-rect-btn" onclick="event.stopPropagation();editAiSuggestion('${s.id}')" aria-label="Edit">
-          <img src="assets/icon-pencil-edit.svg" alt="" width="16" height="16">
+          <img src="assets/ai-btn-edit.svg" alt="" width="16" height="16">
         </button>
         <button class="ai-rect-btn ai-rect-btn-approve" onclick="event.stopPropagation();approveAiSuggestion('${s.id}')" aria-label="Approve">
-          <img src="assets/icon-tick.svg" alt="" width="16" height="16">
+          <img src="assets/ai-btn-approve.svg" alt="" width="16" height="16">
         </button>
       </div>
     </div>
