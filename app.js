@@ -179,6 +179,9 @@ imageContainer.addEventListener('mousedown', (e) => {
     return;
   }
 
+  // Don't start drawing if clicking inside an existing rectangle
+  if (e.target.closest('.damage-rect')) return;
+
   const rect = imageContainer.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
