@@ -626,29 +626,17 @@ function resetMarkDamageForm() {
 
 // === Render Damage List ===
 function renderDamageList() {
+  const damageListEl = document.getElementById('damageList');
+  const aiListEl = document.getElementById('aiSuggestionsList');
+  const aiPanel = document.getElementById('aiSuggestionsPanel');
   const aiForPhoto = state.aiSuggestions.filter(s => s.photoIndex === currentPhotoIndex);
-  const aiCount = aiForPhoto.length;
 
-  let html = '';
-
-  // AI suggestions summary row (only show if there are suggestions remaining)
-  if (aiCount > 0) {
-    html += `<div class="damage-summary-row">
-      <img src="assets/icon-glitter.svg" alt="" width="16" height="16">
-      <span class="damage-summary-text">${aiCount} suggestion${aiCount > 1 ? 's' : ''} to review</span>
-    </div>`;
-  }
-
-  // Damage items list
+  // Added damage panel
   if (state.damages.length === 0) {
-    html += `<div class="damage-summary-row">
-      <img src="assets/icon-profile.svg" alt="" width="16" height="16">
-      <span class="damage-summary-text">No agent added damage</span>
-    </div>`;
+    damageListEl.innerHTML = '<div class="damage-empty-inline">No added damage</div>';
   } else {
-    html += state.damages.map((d) => {
-      const isAiApproved = d.isAiApproved;
-      const sourceIcon = isAiApproved ? 'assets/icon-glitter.svg' : 'assets/icon-profile.svg';
+    damageListEl.innerHTML = state.damages.map(d => {
+      const sourceIcon = d.isAiApproved ? 'assets/icon-glitter.svg' : 'assets/icon-profile.svg';
       return `
       <div class="damage-list-item" data-id="${d.id}">
         <div class="damage-item-info">
@@ -670,9 +658,36 @@ function renderDamageList() {
     }).join('');
   }
 
-  damageList.innerHTML = html;
+  // AI Suggestions panel
+  if (aiForPhoto.length === 0) {
+    aiPanel.style.display = 'none';
+  } else {
+    aiPanel.style.display = 'flex';
+    aiListEl.innerHTML = aiForPhoto.map(s => `
+      <div class="ai-suggestion-item" data-ai-id="${s.id}">
+        <div class="damage-item-info">
+          <span class="damage-item-title">${s.type}</span>
+          <span class="damage-item-detail-row">
+            <img src="assets/icon-glitter.svg" alt="" width="12" height="12" class="damage-source-icon">
+            <span>${s.size} - ${s.location}</span>
+          </span>
+        </div>
+        <div class="damage-item-actions">
+          <button class="ai-item-btn" onclick="dismissAiSuggestion('${s.id}')" aria-label="Delete">
+            <img src="assets/icon-ai-bin.svg" alt="" width="16" height="16">
+          </button>
+          <button class="ai-item-btn" onclick="editAiSuggestion('${s.id}')" aria-label="Edit">
+            <img src="assets/icon-ai-edit.svg" alt="" width="16" height="16">
+          </button>
+          <button class="ai-item-btn" onclick="approveAiSuggestion('${s.id}')" aria-label="Approve">
+            <img src="assets/icon-ai-tick.svg" alt="" width="16" height="16">
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
 
-  // Bind hover on list items to show label on corresponding rect
+  // Bind hover on added damage list items
   document.querySelectorAll('.damage-list-item[data-id]').forEach(item => {
     const id = item.dataset.id;
     item.addEventListener('mouseenter', () => {
@@ -682,6 +697,19 @@ function renderDamageList() {
     item.addEventListener('mouseleave', () => {
       const rect = damageRectangles.querySelector(`[data-damage-id="${id}"]`);
       if (rect) { rect.classList.remove('highlighted'); rect.classList.remove('show-label'); }
+    });
+  });
+
+  // Bind hover on AI suggestion list items
+  document.querySelectorAll('.ai-suggestion-item[data-ai-id]').forEach(item => {
+    const aiId = item.dataset.aiId;
+    item.addEventListener('mouseenter', () => {
+      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
+      if (rect) rect.classList.add('show-label');
+    });
+    item.addEventListener('mouseleave', () => {
+      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
+      if (rect) rect.classList.remove('show-label');
     });
   });
 }
@@ -733,35 +761,46 @@ function approveAiSuggestion(aiId) {
   const suggestion = state.aiSuggestions.find(s => s.id === aiId);
   if (!suggestion) return;
 
-  // Convert to confirmed damage
-  const damage = {
-    id: Date.now(),
-    type: suggestion.type,
-    size: suggestion.size,
-    location: suggestion.location,
-    rect: { ...suggestion.rect },
-    crop: suggestion.crop ? { ...suggestion.crop } : null,
-    pinLocation: null,
-    cropDataUrl: null,
-    photoIndex: suggestion.photoIndex,
-    photoName: photoAngles[suggestion.photoIndex].name,
-    isAiApproved: true
-  };
+  // Animate the item out
+  const itemEl = document.querySelector(`[data-ai-id="${aiId}"]`);
+  if (itemEl) {
+    itemEl.classList.add('removing');
+    setTimeout(() => {
+      // Convert to confirmed damage
+      const damage = {
+        id: Date.now(),
+        type: suggestion.type,
+        size: suggestion.size,
+        location: suggestion.location,
+        rect: { ...suggestion.rect },
+        crop: suggestion.crop ? { ...suggestion.crop } : null,
+        pinLocation: null,
+        cropDataUrl: null,
+        photoIndex: suggestion.photoIndex,
+        photoName: photoAngles[suggestion.photoIndex].name,
+        isAiApproved: true
+      };
 
-  savedDamages.push(damage);
-  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
+      savedDamages.push(damage);
+      state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
+      state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
 
-  // Remove from suggestions
-  state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
-
-  renderDamageList();
-  renderDamageRectangles();
+      renderDamageList();
+      renderDamageRectangles();
+    }, 300);
+  }
 }
 
 function dismissAiSuggestion(aiId) {
-  state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
-  renderDamageList();
-  renderDamageRectangles();
+  const itemEl = document.querySelector(`[data-ai-id="${aiId}"]`);
+  if (itemEl) {
+    itemEl.classList.add('removing');
+    setTimeout(() => {
+      state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
+      renderDamageList();
+      renderDamageRectangles();
+    }, 300);
+  }
 }
 
 function editAiSuggestion(aiId) {

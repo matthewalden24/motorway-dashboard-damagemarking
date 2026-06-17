@@ -660,13 +660,24 @@ html, body {
 /* Damage Sidebar */
 .damage-sidebar {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  align-self: center;
+}
+
+.damage-panel {
   background: var(--color-dark-panel);
   border-radius: var(--radius-xl);
   padding: 32px 24px;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.damage-panel-ai {
   gap: 24px;
-  min-width: 0;
 }
 
 .damage-sidebar-header {
@@ -695,6 +706,41 @@ html, body {
   flex-direction: column;
   gap: 4px;
   overflow-y: auto;
+}
+
+.damage-empty-inline {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-placeholder);
+  line-height: 1.44;
+  opacity: 0.5;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.ai-suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ai-suggestion-item.removing {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
 .damage-empty {
@@ -1229,8 +1275,14 @@ input:focus-visible {
 
 /* Damage list item hover */
 .damage-list-item {
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), opacity 0.3s ease, transform 0.3s ease;
   position: relative;
+  animation: slideInFromRight 0.3s ease;
+}
+
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .damage-list-item:hover {
@@ -1691,4 +1743,27 @@ input:focus-visible {
 .damage-list-item .ai-approve-btn svg {
   width: 14px;
   height: 14px;
+}
+
+.ai-item-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border-light);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.ai-item-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ai-item-btn img {
+  width: 16px;
+  height: 16px;
 }

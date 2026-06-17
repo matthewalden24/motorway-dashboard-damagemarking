@@ -210,12 +210,21 @@
           </button>
         </div>
         <div class="damage-sidebar" id="damageSidebar">
-          <div class="damage-sidebar-header">
-            <h3 class="damage-sidebar-title">Damage</h3>
-            <p class="damage-sidebar-subtitle">Click and drag to mark new damage</p>
+          <div class="damage-panel damage-panel-added">
+            <div class="damage-sidebar-header">
+              <h3 class="damage-sidebar-title">Added damage</h3>
+              <p class="damage-sidebar-subtitle">Click and drag to mark new damage</p>
+            </div>
+            <div class="damage-list" id="damageList">
+              <div class="damage-empty-inline">No added damage</div>
+            </div>
           </div>
-          <div class="damage-list" id="damageList">
-            <div class="damage-empty">None added</div>
+          <div class="damage-panel damage-panel-ai" id="aiSuggestionsPanel">
+            <div class="damage-sidebar-header">
+              <h3 class="damage-sidebar-title">AI Suggestions</h3>
+              <p class="damage-sidebar-subtitle">Review, add or remove the AI suggestions</p>
+            </div>
+            <div class="ai-suggestions-list" id="aiSuggestionsList"></div>
           </div>
         </div>
       </div>
