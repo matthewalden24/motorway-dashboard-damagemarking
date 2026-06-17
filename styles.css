@@ -670,7 +670,7 @@ html, body {
 .damage-panel {
   background: var(--color-dark-panel);
   border-radius: var(--radius-xl);
-  padding: 24px 16px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
