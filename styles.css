@@ -664,7 +664,7 @@ html, body {
   flex-direction: column;
   gap: 8px;
   min-width: 0;
-  align-self: center;
+  align-self: flex-start;
 }
 
 .damage-panel {
@@ -1694,10 +1694,6 @@ input:focus-visible {
 
 .ai-rect-btn-approve {
   background: rgba(36, 36, 36, 0.85);
-}
-
-.ai-rect-btn-approve img {
-  filter: brightness(0) invert(1);
 }
 
 .damage-rect.ai-suggestion .damage-rect-label {
