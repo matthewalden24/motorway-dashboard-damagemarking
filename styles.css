@@ -1662,9 +1662,15 @@ input:focus-visible {
   opacity: 0;
   transition: opacity 0.15s ease;
   pointer-events: none;
+  z-index: 200;
 }
 
 .damage-rect.ai-suggestion:hover .ai-rect-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ai-rect-actions:hover {
   opacity: 1;
   pointer-events: auto;
 }
