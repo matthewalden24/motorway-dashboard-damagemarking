@@ -1033,10 +1033,10 @@ function renderConditionDamageSection() {
 
 // === Photo Navigation ===
 const photoAngles = [
-  { name: 'Driver side - Front', src: 'assets/exterior_front_driver_18753495.jpg' },
-  { name: 'Driver side - Back', src: 'assets/exterior_rear_driver_18753495.jpg' },
-  { name: 'Passenger side - Front', src: 'assets/exterior_front_passenger_18753495.jpg' },
-  { name: 'Passenger side - Back', src: 'assets/exterior_rear_passenger_18753495.jpg' }
+  { name: 'Driver side - Front', src: 'assets/exterior_front_driver_21923553.jpg' },
+  { name: 'Driver side - Back', src: 'assets/exterior_rear_driver_21923553.jpg' },
+  { name: 'Passenger side - Front', src: 'assets/exterior_front_passenger_21923553.jpg' },
+  { name: 'Passenger side - Back', src: 'assets/exterior_rear_passenger_21923553.jpg' }
 ];
 let currentPhotoIndex = 0;
 
