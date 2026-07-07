@@ -138,7 +138,8 @@ function openDamageModal() {
     state.aiSuggestions = [
       { id: 'ai-1', type: 'Dent', size: 'Small', location: 'Driver door', isAi: true, photoIndex: 0, rect: { leftPct: 11.6, topPct: 36.5, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.116, y: 0.365, w: 0.068, h: 0.071 } },
       { id: 'ai-2', type: 'Scratch or scuff', size: 'Small', location: 'Front wing', isAi: true, photoIndex: 0, rect: { leftPct: 29.4, topPct: 50.2, widthPct: 8.7, heightPct: 8.9 }, crop: { x: 0.294, y: 0.502, w: 0.087, h: 0.089 } },
-      { id: 'ai-3', type: 'Scratch or scuff', size: 'Small', location: 'Front wing', isAi: true, photoIndex: 0, rect: { leftPct: 52.5, topPct: 71.7, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.525, y: 0.717, w: 0.068, h: 0.071 } }
+      { id: 'ai-3', type: 'Scratch or scuff', size: 'Small', location: 'Front wing', isAi: true, photoIndex: 0, rect: { leftPct: 52.5, topPct: 71.7, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.525, y: 0.717, w: 0.068, h: 0.071 } },
+      { id: 'ai-4', type: 'Scratch or scuff', size: 'Medium', location: 'Front bumper', isAi: true, photoIndex: 0, rect: { leftPct: 61.9, topPct: 70.1, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.619, y: 0.701, w: 0.068, h: 0.071 } }
     ];
   }
 
