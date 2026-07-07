@@ -172,6 +172,14 @@ function goBackToDamage() {
 
 // === Drawing Damage Rectangles ===
 imageContainer.addEventListener('mousedown', (e) => {
+  // Shift+click = pan
+  if (e.shiftKey) {
+    state.isPanning = true;
+    state.panStart = { x: e.clientX - state.panOffset.x, y: e.clientY - state.panOffset.y };
+    imageContainer.style.cursor = 'grabbing';
+    return;
+  }
+
   if (state.panMode) {
     state.isPanning = true;
     state.panStart = { x: e.clientX - state.panOffset.x, y: e.clientY - state.panOffset.y };
@@ -543,9 +551,11 @@ addDamageBtn.addEventListener('click', () => {
       pinLocation: state.pinLocation ? { ...state.pinLocation } : null,
       cropDataUrl: cropDataUrl || null,
       photoIndex: currentPhotoIndex,
-      photoName: photoAngles[currentPhotoIndex].name
+      photoName: photoAngles[currentPhotoIndex].name,
+      isAiApproved: state.editingAsAiApproval || false
     };
     savedDamages.push(damage);
+    state.editingAsAiApproval = false;
   }
 
   // Update state.damages to reflect current photo
@@ -605,6 +615,7 @@ function resetMarkDamageForm() {
   state.pinLocation = null;
   state.currentDamage = null;
   state.editingDamageId = null;
+  state.editingAsAiApproval = false;
   state.selectedPanel = null;
   damageTypeText.textContent = 'Select the damage type';
   damageTypeText.classList.remove('selected');
@@ -676,9 +687,6 @@ function renderDamageList() {
           <button class="ai-item-btn" onclick="dismissAiSuggestion('${s.id}')" aria-label="Delete">
             <img src="assets/icon-ai-bin.svg" alt="" width="16" height="16">
           </button>
-          <button class="ai-item-btn" onclick="editAiSuggestion('${s.id}')" aria-label="Edit">
-            <img src="assets/icon-ai-edit.svg" alt="" width="16" height="16">
-          </button>
           <button class="ai-item-btn" onclick="approveAiSuggestion('${s.id}')" aria-label="Approve">
             <img src="assets/icon-ai-tick.svg" alt="" width="16" height="16">
           </button>
@@ -743,9 +751,6 @@ function renderDamageRectangles() {
         <button class="ai-rect-btn" onclick="event.stopPropagation();dismissAiSuggestion('${s.id}')" aria-label="Dismiss">
           <img src="assets/icon-ai-bin.svg" alt="" width="16" height="16">
         </button>
-        <button class="ai-rect-btn" onclick="event.stopPropagation();editAiSuggestion('${s.id}')" aria-label="Edit">
-          <img src="assets/icon-ai-edit.svg" alt="" width="16" height="16">
-        </button>
         <button class="ai-rect-btn ai-rect-btn-approve" onclick="event.stopPropagation();approveAiSuggestion('${s.id}')" aria-label="Approve">
           <img src="assets/icon-ai-tick.svg" alt="" width="16" height="16">
         </button>
@@ -763,32 +768,47 @@ function approveAiSuggestion(aiId) {
 
   // Animate the item out
   const itemEl = document.querySelector(`[data-ai-id="${aiId}"]`);
-  if (itemEl) {
-    itemEl.classList.add('removing');
-    setTimeout(() => {
-      // Convert to confirmed damage
-      const damage = {
-        id: Date.now(),
-        type: suggestion.type,
-        size: suggestion.size,
-        location: suggestion.location,
-        rect: { ...suggestion.rect },
-        crop: suggestion.crop ? { ...suggestion.crop } : null,
-        pinLocation: null,
-        cropDataUrl: null,
-        photoIndex: suggestion.photoIndex,
-        photoName: photoAngles[suggestion.photoIndex].name,
-        isAiApproved: true
-      };
+  if (itemEl) itemEl.classList.add('removing');
 
-      savedDamages.push(damage);
-      state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
-      state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
+  setTimeout(() => {
+    // Remove from AI suggestions
+    state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
 
-      renderDamageList();
-      renderDamageRectangles();
-    }, 300);
-  }
+    // Set up current damage with the suggestion data for edit
+    state.currentDamage = {
+      rect: { ...suggestion.rect },
+      crop: suggestion.crop ? { ...suggestion.crop } : null
+    };
+
+    // Pre-fill the form
+    state.selectedType = suggestion.type;
+    damageTypeText.textContent = suggestion.type;
+    damageTypeText.classList.add('selected');
+
+    state.selectedSize = suggestion.size;
+    document.querySelectorAll('input[name="damageSize"]').forEach(r => {
+      r.checked = r.value === suggestion.size;
+    });
+
+    // Set a default pin
+    state.pinLocation = { x: 380, y: 280 };
+    damagePinMarker.style.display = 'block';
+    damagePinMarker.style.left = '380px';
+    damagePinMarker.style.top = '280px';
+
+    // Mark as AI approved when saved
+    state.editingAsAiApproval = true;
+
+    // Show cropped preview
+    showFormPreview();
+    checkFormValidity();
+
+    // Change button text
+    addDamageBtn.textContent = 'Add and save';
+
+    // Transition to edit
+    transitionToMarkDamage();
+  }, 300);
 }
 
 function dismissAiSuggestion(aiId) {
@@ -801,33 +821,6 @@ function dismissAiSuggestion(aiId) {
       renderDamageRectangles();
     }, 300);
   }
-}
-
-function editAiSuggestion(aiId) {
-  const suggestion = state.aiSuggestions.find(s => s.id === aiId);
-  if (!suggestion) return;
-
-  // Approve it first (add to saved damages), then open for editing
-  const damage = {
-    id: Date.now(),
-    type: suggestion.type,
-    size: suggestion.size,
-    location: suggestion.location,
-    rect: { ...suggestion.rect },
-    crop: suggestion.crop ? { ...suggestion.crop } : null,
-    pinLocation: null,
-    cropDataUrl: null,
-    photoIndex: suggestion.photoIndex,
-    photoName: photoAngles[suggestion.photoIndex].name,
-    isAiApproved: true
-  };
-
-  savedDamages.push(damage);
-  state.damages = savedDamages.filter(d => d.photoIndex === currentPhotoIndex);
-  state.aiSuggestions = state.aiSuggestions.filter(s => s.id !== aiId);
-
-  // Now open edit for this damage
-  editDamage(damage.id);
 }
 
 // === Edit / Delete Damage ===
@@ -1108,6 +1101,18 @@ document.addEventListener('keydown', (e) => {
     } else if (screens.damageModal.classList.contains('active')) {
       closeDamageModal();
       renderConditionDamageSection();
+    }
+  }
+  // Shift held = show grab cursor
+  if (e.key === 'Shift' && screens.damageModal.classList.contains('active')) {
+    imageContainer.style.cursor = 'grab';
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  if (e.key === 'Shift') {
+    if (!state.isPanning) {
+      imageContainer.style.cursor = 'crosshair';
     }
   }
 });
