@@ -806,11 +806,9 @@ function approveAiSuggestion(aiId) {
       r.checked = r.value === suggestion.size;
     });
 
-    // Set a default pin
-    state.pinLocation = { x: 380, y: 280 };
-    damagePinMarker.style.display = 'block';
-    damagePinMarker.style.left = '380px';
-    damagePinMarker.style.top = '280px';
+    // No pin location yet - agent needs to add it
+    state.pinLocation = null;
+    damagePinMarker.style.display = 'none';
 
     // Mark as AI approved when saved
     state.editingAsAiApproval = true;
