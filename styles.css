@@ -1670,8 +1670,8 @@ input:focus-visible {
 }
 
 .ai-rect-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.8);
   border: none;
@@ -1683,8 +1683,8 @@ input:focus-visible {
 }
 
 .ai-rect-btn img {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
 .ai-rect-btn:hover {

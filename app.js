@@ -378,8 +378,8 @@ function updateImageTransform() {
   });
 
   // Resize action buttons directly
-  const btnSize = 36 * inv;
-  const iconSize = 16 * inv;
+  const btnSize = 40 * inv;
+  const iconSize = 18 * inv;
   const gap = 8 * inv;
   document.querySelectorAll('.ai-rect-actions').forEach(actions => {
     actions.style.gap = gap + 'px';
