@@ -364,18 +364,34 @@ function updateImageTransform() {
   wrapper.style.transform = `translate(${state.panOffset.x}px, ${state.panOffset.y}px) scale(${state.zoom})`;
 
   // Keep border visually consistent regardless of zoom
-  const inverseZoom = 1 / state.zoom;
-  const scaledBorder = 2 * inverseZoom;
+  const inv = 1 / state.zoom;
+  const scaledBorder = 2 * inv;
   document.querySelectorAll('.damage-rect').forEach(rect => {
     rect.style.borderWidth = scaledBorder + 'px';
   });
 
-  // Counter-scale labels and buttons to stay same screen size
+  // Resize labels directly (no transform scale = no blur)
   document.querySelectorAll('.damage-rect-label').forEach(label => {
-    label.style.transform = `translateX(-50%) scale(${inverseZoom})`;
+    label.style.fontSize = (12 * inv) + 'px';
+    label.style.padding = (6 * inv) + 'px ' + (12 * inv) + 'px';
+    label.style.borderRadius = (6 * inv) + 'px';
   });
+
+  // Resize action buttons directly
+  const btnSize = 36 * inv;
+  const iconSize = 16 * inv;
+  const gap = 8 * inv;
   document.querySelectorAll('.ai-rect-actions').forEach(actions => {
-    actions.style.transform = `translateX(-50%) scale(${inverseZoom})`;
+    actions.style.gap = gap + 'px';
+    actions.style.top = `calc(100% + ${8 * inv}px)`;
+  });
+  document.querySelectorAll('.ai-rect-btn').forEach(btn => {
+    btn.style.width = btnSize + 'px';
+    btn.style.height = btnSize + 'px';
+  });
+  document.querySelectorAll('.ai-rect-btn img').forEach(img => {
+    img.style.width = iconSize + 'px';
+    img.style.height = iconSize + 'px';
   });
 }
 
