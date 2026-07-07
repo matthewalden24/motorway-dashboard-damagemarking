@@ -138,7 +138,7 @@ function openDamageModal() {
     state.aiSuggestions = [
       { id: 'ai-1', type: 'Dent', size: 'Large', location: 'Driver door', isAi: true, photoIndex: 0, rect: { leftPct: 12.8, topPct: 50.6, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.128, y: 0.506, w: 0.068, h: 0.071 } },
       { id: 'ai-2', type: 'Scratch or scuff', size: 'Small', location: 'Front wing', isAi: true, photoIndex: 0, rect: { leftPct: 29.4, topPct: 50.2, widthPct: 8.7, heightPct: 8.9 }, crop: { x: 0.294, y: 0.502, w: 0.087, h: 0.089 } },
-      { id: 'ai-3', type: 'Broken or missing trim', size: 'Small', location: 'Front bumper', isAi: true, photoIndex: 0, rect: { leftPct: 57.2, topPct: 82.6, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.572, y: 0.826, w: 0.068, h: 0.071 } }
+      { id: 'ai-3', type: 'Scratch or scuff', size: 'Small', location: 'Front wing', isAi: true, photoIndex: 0, rect: { leftPct: 52.5, topPct: 70.1, widthPct: 6.8, heightPct: 7.1 }, crop: { x: 0.525, y: 0.701, w: 0.068, h: 0.071 } }
     ];
   }
 

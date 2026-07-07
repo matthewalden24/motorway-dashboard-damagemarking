@@ -1673,7 +1673,7 @@ input:focus-visible {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(36, 36, 36, 0.85);
+  background: rgba(0, 0, 0, 0.8);
   border: none;
   display: flex;
   align-items: center;
@@ -1688,12 +1688,12 @@ input:focus-visible {
 }
 
 .ai-rect-btn:hover {
-  background: rgba(36, 36, 36, 1);
+  background: rgba(0, 0, 0, 0.9);
   transform: scale(1.1);
 }
 
 .ai-rect-btn-approve {
-  background: rgba(36, 36, 36, 0.85);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .damage-rect.ai-suggestion .damage-rect-label {
