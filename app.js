@@ -370,60 +370,12 @@ function updateImageTransform() {
     rect.style.borderWidth = scaledBorder + 'px';
   });
 
-  // Reposition overlays (labels + action buttons) outside the scaled wrapper
-  positionDamageOverlays();
-}
-
-function positionDamageOverlays() {
-  const overlaysContainer = document.getElementById('damageOverlays');
-  if (!overlaysContainer) return;
-
-  const containerRect = imageContainer.getBoundingClientRect();
-  let html = '';
-
-  // For each damage rect, compute its screen position and place label
-  document.querySelectorAll('.damage-rect').forEach(rect => {
-    const r = rect.getBoundingClientRect();
-    const centerX = r.left + r.width / 2 - containerRect.left;
-    const topY = r.top - containerRect.top - 8;
-    const bottomY = r.bottom - containerRect.top + 8;
-    const id = rect.dataset.damageId || rect.dataset.aiId || '';
-    const label = rect.querySelector('.damage-rect-label');
-    const labelText = label ? label.textContent : '';
-    const isAi = rect.classList.contains('ai-suggestion');
-
-    html += `<div class="damage-overlay-label" data-overlay-for="${id}" style="left:${centerX}px;top:${topY}px;">${labelText}</div>`;
-
-    if (isAi) {
-      html += `<div class="damage-overlay-actions" data-overlay-actions="${id}" style="left:${centerX}px;top:${bottomY}px;">
-        <button class="ai-rect-btn" onclick="event.stopPropagation();dismissAiSuggestion('${id}')" aria-label="Dismiss"><img src="assets/icon-ai-bin.svg" alt="" width="16" height="16"></button>
-        <button class="ai-rect-btn ai-rect-btn-approve" onclick="event.stopPropagation();approveAiSuggestion('${id}')" aria-label="Approve"><img src="assets/icon-ai-tick.svg" alt="" width="16" height="16"></button>
-      </div>`;
-    }
+  // Counter-scale labels and buttons to stay same screen size
+  document.querySelectorAll('.damage-rect-label').forEach(label => {
+    label.style.transform = `translateX(-50%) scale(${inverseZoom})`;
   });
-
-  overlaysContainer.innerHTML = html;
-
-  // Bind hover on rects to show/hide overlays
-  document.querySelectorAll('.damage-rect').forEach(rect => {
-    const id = rect.dataset.damageId || rect.dataset.aiId || '';
-    rect.addEventListener('mouseenter', () => {
-      const label = overlaysContainer.querySelector(`[data-overlay-for="${id}"]`);
-      const actions = overlaysContainer.querySelector(`[data-overlay-actions="${id}"]`);
-      if (label) label.classList.add('visible');
-      if (actions) actions.classList.add('visible');
-    });
-    rect.addEventListener('mouseleave', () => {
-      const label = overlaysContainer.querySelector(`[data-overlay-for="${id}"]`);
-      const actions = overlaysContainer.querySelector(`[data-overlay-actions="${id}"]`);
-      if (label) label.classList.remove('visible');
-      // Keep actions visible briefly for hover bridge
-      if (actions) {
-        setTimeout(() => {
-          if (!actions.matches(':hover')) actions.classList.remove('visible');
-        }, 100);
-      }
-    });
+  document.querySelectorAll('.ai-rect-actions').forEach(actions => {
+    actions.style.transform = `translateX(-50%) scale(${inverseZoom})`;
   });
 }
 
@@ -748,15 +700,11 @@ function renderDamageList() {
     const id = item.dataset.id;
     item.addEventListener('mouseenter', () => {
       const rect = damageRectangles.querySelector(`[data-damage-id="${id}"]`);
-      if (rect) rect.classList.add('highlighted');
-      const label = document.querySelector(`[data-overlay-for="${id}"]`);
-      if (label) label.classList.add('visible');
+      if (rect) { rect.classList.add('highlighted'); rect.classList.add('show-label'); }
     });
     item.addEventListener('mouseleave', () => {
       const rect = damageRectangles.querySelector(`[data-damage-id="${id}"]`);
-      if (rect) rect.classList.remove('highlighted');
-      const label = document.querySelector(`[data-overlay-for="${id}"]`);
-      if (label) label.classList.remove('visible');
+      if (rect) { rect.classList.remove('highlighted'); rect.classList.remove('show-label'); }
     });
   });
 
@@ -764,12 +712,12 @@ function renderDamageList() {
   document.querySelectorAll('.ai-suggestion-item[data-ai-id]').forEach(item => {
     const aiId = item.dataset.aiId;
     item.addEventListener('mouseenter', () => {
-      const label = document.querySelector(`[data-overlay-for="${aiId}"]`);
-      if (label) label.classList.add('visible');
+      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
+      if (rect) rect.classList.add('show-label');
     });
     item.addEventListener('mouseleave', () => {
-      const label = document.querySelector(`[data-overlay-for="${aiId}"]`);
-      if (label) label.classList.remove('visible');
+      const rect = damageRectangles.querySelector(`[data-ai-id="${aiId}"]`);
+      if (rect) rect.classList.remove('show-label');
     });
   });
 }
@@ -799,11 +747,18 @@ function renderDamageRectangles() {
   html += aiForPhoto.map(s => `
     <div class="damage-rect ai-suggestion" data-ai-id="${s.id}" style="left:${s.rect.leftPct}%;top:${s.rect.topPct}%;width:${s.rect.widthPct}%;height:${s.rect.heightPct}%;">
       <div class="damage-rect-label">${damageTypeLabels[s.type] || s.type}</div>
+      <div class="ai-rect-actions">
+        <button class="ai-rect-btn" onclick="event.stopPropagation();dismissAiSuggestion('${s.id}')" aria-label="Dismiss">
+          <img src="assets/icon-ai-bin.svg" alt="" width="16" height="16">
+        </button>
+        <button class="ai-rect-btn ai-rect-btn-approve" onclick="event.stopPropagation();approveAiSuggestion('${s.id}')" aria-label="Approve">
+          <img src="assets/icon-ai-tick.svg" alt="" width="16" height="16">
+        </button>
+      </div>
     </div>
   `).join('');
 
   damageRectangles.innerHTML = html;
-  positionDamageOverlays();
 }
 
 // === AI Suggestion Actions ===
